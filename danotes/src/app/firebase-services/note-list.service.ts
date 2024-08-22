@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Note } from '../interfaces/note.interface';
-import { Firestore, collection, doc, onSnapshot, addDoc } from '@angular/fire/firestore';
+import { Firestore, collection, doc, onSnapshot, addDoc, updateDoc } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -19,6 +19,12 @@ unsubTrash;
   constructor() { 
     this.unsubNotes = this.subNotesList();
     this.unsubTrash = this.subTrashList();
+}
+
+async updateNote(colId:string, docId: string, item: {}){
+  await updateDoc(this.getSingleDocRef(colId, docId), item).catch(
+    (err) => {console.log(err)}
+  ).then();
 }
  
 async addNote(item: Note){
