@@ -14,7 +14,9 @@
     ></textarea>
   </div>
   <div class="btn_wrapper">
-    <button class="btn emptyBtn" (click)="closeDialog()">Cancel</button>
+    <button class="btn emptyBtn" (click)="addDialogClosed.emit(false)">
+      Cancel
+    </button>
     <button class="btn fullBtn" (click)="addNote()">add note</button>
   </div>
 </div>
