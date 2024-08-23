@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Note } from '../interfaces/note.interface';
-import { Firestore, collection, doc, onSnapshot, addDoc, updateDoc } from '@angular/fire/firestore';
+import { Firestore, collection, doc, onSnapshot, addDoc, updateDoc, deleteDoc } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +19,26 @@ export class NoteListService {
     this.unsubNotes = this.subNotesList();
     this.unsubTrash = this.subTrashList();
   }
+
+ /*  async deleteNote(colId: string, docId: string) {
+    if (docId) {
+      try {
+        await deleteDoc(this.getSingleDocRef(colId, docId));
+        console.log('Document successfully deleted');
+      } catch (error) {
+        console.error('Error deleting document: ', error);
+      }
+    } else {
+      console.error('No document ID provided for deletion');
+    }
+  } */
+  
+  async deleteNote(colId: string, docId: string){
+   await deleteDoc(this.getSingleDocRef(colId, docId)).catch(
+     (err) => {console.log(err)}
+  );
+}
+
 
   async updateNote(note: Note) {
     if(note.id){
