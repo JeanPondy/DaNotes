@@ -24,19 +24,21 @@ export class AddNoteDialogComponent {
     this.description = "";
     this.addDialogClosed.emit(false);
   }
-
-  addNote(){
+  addNote(colId: "notes" | "trash") { // Anpassen der Methode
     let note: Note = {
       type: "note",
       title: this.title,
       content: this.description,
       marked: false,
-    }
-    this.noteService.addNote(note);
+    };
+    
+    // Übergabe des colId-Parameters an die Service-Methode
+    this.noteService.addNote(note, colId); 
 
-    this.addDialogClosed.emit(false)
+    this.addDialogClosed.emit(false);
 
-    //beachte das closeDialog() zum Schluss kommt, denn es leert die Variablen
+    // beachte das closeDialog() zum Schluss kommt, denn es leert die Variablen
     this.closeDialog();
   }
+
 }

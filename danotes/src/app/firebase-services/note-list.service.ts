@@ -16,7 +16,7 @@ export class NoteListService {
   firestore: Firestore = inject(Firestore);
 
   constructor() { 
-    this.unsubNotes = this.subNotesList();
+    this.unsubNotes = this.subNotesList("notes");
     this.unsubTrash = this.subTrashList();
   }
 
@@ -64,9 +64,9 @@ export class NoteListService {
     return note.type === 'note' ? 'Notes' : 'Trash';
   }
 
-  async addNote(item: Note) {
+  async addNote(item: Note, colId: "notes" | "trash") {
     try {
-      const docRef = await addDoc(this.getNotesRef(), item);
+      const docRef = await addDoc(this.getNotesRef(colId), item); // Übergabe des colId
       console.log("Document written with ID: ", docRef.id);
     } catch (err) {
       console.error('Error adding document: ', err);
@@ -87,9 +87,9 @@ export class NoteListService {
     });
   }
 
-  subNotesList() {
-    return onSnapshot(this.getNotesRef(), (list) => {
-      this.normalNotes = [];
+  subNotesList(colId: "notes" | "trash") {
+    return onSnapshot(this.getNotesRef(colId), (list) => {
+      this.normalNotes = []; // Leeren des Arrays vor dem Hinzufügen neuer Notizen
       list.forEach(element => {
         this.normalNotes.push(this.setNoteObject(element.data(), element.id));
       });
@@ -106,15 +106,28 @@ export class NoteListService {
     };
   }
 
-  getNotesRef() {
-    return collection(this.firestore, 'Notes');
+  getNotesRef(colId: "notes" | "trash") {
+    return collection(this.firestore, colId); // Verwendung des colId-Parameters
   }
 
   getTrashRef() {
     return collection(this.firestore, 'Trash');
   }
 
+
   getSingleDocRef(colId: string, docId: string) {
     return doc(this.firestore, colId, docId);
   }
 }
+
+
+
+ 
+
+
+ 
+
+ 
+
+ 
+
