@@ -93,13 +93,29 @@ export class NoteListService {
   }
 
   subNotesList(colId: "Notes" | "Trash") {
-
-    const q = query(this.getNotesRef(colId), /* where("marked", "==", false), */ limit(100));
-
-    return onSnapshot(q, (list) => {
-      this.normalNotes = []; // Leeren des Arrays vor dem Hinzufügen neuer Notizen
-      list.forEach(element => {
-        this.normalNotes.push(this.setNoteObject(element.data(), element.id));
+    const q = query(this.getNotesRef(colId), limit(100));
+  
+    return onSnapshot(q, (snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        const noteData = change.doc.data();
+        const noteId = change.doc.id;
+        const note = this.setNoteObject(noteData, noteId);
+  
+        if (change.type === "added") {
+          this.normalNotes.push(note);
+          console.log("New note added: ", note);
+        }
+        if (change.type === "modified") {
+          const index = this.normalNotes.findIndex(n => n.id === noteId);
+          if (index !== -1) {
+            this.normalNotes[index] = note;
+            console.log("Note modified: ", note);
+          }
+        }
+        if (change.type === "removed") {
+          this.normalNotes = this.normalNotes.filter(n => n.id !== noteId);
+          console.log("Note removed: ", note);
+        }
       });
     });
   }
