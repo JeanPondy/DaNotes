@@ -17,31 +17,40 @@ import { NoteComponent } from './note/note.component';
 export class NoteListComponent {
   noteList: Note[] = [];
   favFilter: "all" | "fav" = "all";
-  status: "notes" | "trash" = "notes";
+  status: "Notes" | "Trash" = "Notes";
 
   constructor(private noteService: NoteListService) {
   
   }
 
   getList(): Note[]{
-    return this.noteService.normalNotes; //1 zu note-list komponent-html gehen
+   if (this.status == 'Notes'){
+    if(this.favFilter == 'all'){
+      return this.noteService.normalNotes; 
+    } else {
+      return this.noteService.normalMarkedNotes;
+    } 
+  }else {
+      return this.noteService.trashNotes
+    }
    
   }
 
   getListTrash(): Note[]{
     return this.noteService.trashNotes;
   }
-
+ 
   changeFavFilter(filter:"all" | "fav"){
     this.favFilter = filter;
   }
 
   changeTrashStatus(){
-    if(this.status == "trash"){
-      this.status = "notes";
+    if(this.status == "Trash"){
+      this.status = "Notes";
     } else {
-      this.status = "trash";
+      this.status = "Trash";
       this.favFilter = "all";
     }
   }
 }
+

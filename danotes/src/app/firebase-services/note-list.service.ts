@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Note } from '../interfaces/note.interface';
-import { Firestore, collection, doc, onSnapshot, addDoc, updateDoc, deleteDoc } from '@angular/fire/firestore';
+import { Firestore, collection, doc, onSnapshot, addDoc, updateDoc, deleteDoc, query, where, orderBy, limit } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -9,15 +9,18 @@ export class NoteListService {
 
   trashNotes: Note[] = [];
   normalNotes: Note[] = [];
+  normalMarkedNotes: Note[] = [];
 
   unsubNotes: () => void;
   unsubTrash: () => void;
+  unsubMarkedNotes: () => void;
 
   firestore: Firestore = inject(Firestore);
 
   constructor() { 
     this.unsubNotes = this.subNotesList("Notes");
     this.unsubTrash = this.subTrashList();
+    this.unsubMarkedNotes = this.subMarkedNotesList("Notes");
   }
 
  /*  async deleteNote(colId: string, docId: string) {
@@ -77,6 +80,7 @@ export class NoteListService {
   ngOnDestroy() {
     this.unsubNotes();
     this.unsubTrash();
+    this.unsubMarkedNotes();
   }
 
   subTrashList() {
@@ -89,7 +93,10 @@ export class NoteListService {
   }
 
   subNotesList(colId: "Notes" | "Trash") {
-    return onSnapshot(this.getNotesRef(colId), (list) => {
+
+    const q = query(this.getNotesRef(colId), /* where("marked", "==", false), */ limit(100));
+
+    return onSnapshot(q, (list) => {
       this.normalNotes = []; // Leeren des Arrays vor dem Hinzufügen neuer Notizen
       list.forEach(element => {
         this.normalNotes.push(this.setNoteObject(element.data(), element.id));
@@ -97,6 +104,19 @@ export class NoteListService {
     });
   }
 
+  subMarkedNotesList(colId: "Notes" | "Trash") {
+
+    const q = query(this.getNotesRef(colId), where("marked", "==", true) ,limit(3));
+
+    return onSnapshot(q, (list) => {
+      this.normalMarkedNotes = []; // Leeren des Arrays vor dem Hinzufügen neuer Notizen
+      list.forEach(element => {
+        this.normalMarkedNotes.push(this.setNoteObject(element.data(), element.id));
+      });
+    });
+  }
+
+  /* ------------------------------------------------------------------------------- */
   setNoteObject(obj: any, id: string): Note {
     return {
       id: id || "",
