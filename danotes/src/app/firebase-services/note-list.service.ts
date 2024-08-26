@@ -92,9 +92,16 @@ export class NoteListService {
     });
   }
 
+
+
+
+
+
   subNotesList(colId: "Notes" | "Trash") {
-    const q = query(this.getNotesRef(colId), limit(100));
-  
+    const docId = "Notes/5YcNTkqrVIDesgbvVkFZ/NotesExtra";
+    const ref = collection(this.firestore, docId);
+      const q = query(ref, limit(100));
+    //const q = query(this.getNotesRef(colId), limit(100));
     return onSnapshot(q, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
         const noteData = change.doc.data();
