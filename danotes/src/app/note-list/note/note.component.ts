@@ -58,9 +58,22 @@ export class NoteComponent {
   }
 
 
-  moveToNotes(){
-    this.note.type = 'note';
-  }
+  moveToNotes() {
+    if (this.note.id) {  // Überprüft, ob 'this.note' existiert und eine 'id' hat
+        try {
+            this.note.type = 'note';  // Setzt den Notiztyp auf "note"
+            const docId = this.note.id;  // Speichert die ID der Notiz
+            delete this.note.id;  // Entfernt die ID von der Notiz
+            this.noteService.addNote(this.note, "Notes");  // Fügt die Notiz den normalen Notizen hinzu
+            this.noteService.deleteNote("Trash", docId);  // Löscht die Notiz aus dem Papierkorb
+            console.log(`Document with ID ${docId} successfully moved to Notes`);
+        } catch (error) {
+            console.error("An error occurred while moving the note to Notes:", error);
+        }
+    } else {
+        console.warn("No note selected or note ID is missing.");  // Warnung, wenn keine ID vorhanden ist
+    }
+}
 
   deleteNote(){
     if (this.note.id) {
@@ -69,11 +82,10 @@ export class NoteComponent {
         this.noteService.deleteNote("Trash", docId);  // Löscht die Notiz aus dem ursprünglichen Speicherort
         console.log(`Document with ID ${docId} successfully deleted`); 
     } catch (error) {
-        console.error("An error occurred while deleting the note:", error);  // Korrigierte Fehlermeldung
+        console.error("An error occurred while deleting the note:", error);  
     }
 } else {
-    console.warn("No note selected or note ID is missing.");  // Warnung, wenn keine ID vorhanden ist
-
+    console.warn("No note selected or note ID is missing."); 
   }
 
   }
