@@ -24,7 +24,7 @@ export class AddNoteDialogComponent {
     this.description = "";
     this.addDialogClosed.emit(false);
   }
-  addNote(colId: "notes" | "trash") { // Anpassen der Methode
+  addNote(colId: "Notes" | "Trash") { // Anpassen der Methode
     let note: Note = {
       type: "note",
       title: this.title,

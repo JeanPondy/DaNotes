@@ -16,7 +16,7 @@ export class NoteListService {
   firestore: Firestore = inject(Firestore);
 
   constructor() { 
-    this.unsubNotes = this.subNotesList("notes");
+    this.unsubNotes = this.subNotesList("Notes");
     this.unsubTrash = this.subTrashList();
   }
 
@@ -51,7 +51,7 @@ export class NoteListService {
   }
   }
 
-  getCleanJson(note: Note) {
+  getCleanJson(note: Note) {//Hilfsfunktion
     return {
       type: note.type,
       title: note.title,
@@ -60,11 +60,12 @@ export class NoteListService {
     };
   }
 
-  getColIdFromNote(note: Note) {
+  getColIdFromNote(note: Note) {//Hilfsfunktion
     return note.type === 'note' ? 'Notes' : 'Trash';
   }
+  
 
-  async addNote(item: Note, colId: "notes" | "trash") {
+  async addNote(item: Note, colId: "Notes" | "Trash") {
     try {
       const docRef = await addDoc(this.getNotesRef(colId), item); // Übergabe des colId
       console.log("Document written with ID: ", docRef.id);
@@ -87,7 +88,7 @@ export class NoteListService {
     });
   }
 
-  subNotesList(colId: "notes" | "trash") {
+  subNotesList(colId: "Notes" | "Trash") {
     return onSnapshot(this.getNotesRef(colId), (list) => {
       this.normalNotes = []; // Leeren des Arrays vor dem Hinzufügen neuer Notizen
       list.forEach(element => {
@@ -106,7 +107,7 @@ export class NoteListService {
     };
   }
 
-  getNotesRef(colId: "notes" | "trash") {
+  getNotesRef(colId: "Notes" | "Trash") {
     return collection(this.firestore, colId); // Verwendung des colId-Parameters
   }
 
