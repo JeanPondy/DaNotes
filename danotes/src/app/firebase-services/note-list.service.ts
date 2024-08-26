@@ -33,7 +33,7 @@ export class NoteListService {
     }
   } */
   
-  async deleteNote(colId: string, docId: string){
+  async deleteNote(colId: "Notes" | "Trash", docId: string){
    await deleteDoc(this.getSingleDocRef(colId, docId)).catch(
      (err) => {console.log(err)}
   );
